@@ -3,6 +3,8 @@ import psutil
 import GPUtil
 import os
 import re
+import time
+
 
 class SystemInfos(self):
 	"""atributos do objeto"""
@@ -125,7 +127,7 @@ def get_temperatura_cpu(self):
 """Cria uma instância da classe SistemaInfos"""
 def main():
     sistema = SistemaInfos()
-    sistema.mostrar_relatorio()
-
-if __name__ == "__main__":
-    main()
+    while True:
+        os.system('cls' if os.name == 'nt' else 'clear')  # Limpa a tela
+        sistema.mostrar_relatorio()
+        time.sleep(1)  # Aguarda 1 segundo
