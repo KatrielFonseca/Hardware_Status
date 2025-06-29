@@ -68,40 +68,34 @@ class SystemInfos(self):
 
 	"""Método que busca temperatura da cpu"""
 
-	def get_temperatura_cpu(self):
-		sistema_operacional = platform.system()
+def get_temperatura_cpu(self):
+    sistema_operacional = platform.system()
+    if sistema_operacional == "Windows":
+        try:
+            import wmi
+            c = wmi.WMI(namespace="root\WMI")
+            temperature_info = c.MSAcpi_ThermalZoneTemperature()[0]
+            temperature_kelvin = float(temperature_info.CurrentTemperature)
+            temperature_celsius = (temperature_kelvin - 2731.5) / 10.0
+            return f"{temperature_celsius:.2f} °C"
+        except Exception as e:
+            return "Não foi possível obter a temperatura da CPU (Windows)"
+    elif sistema_operacional == "Linux":
+        try:
+            output = os.popen("sensors").read()
+            # Tenta encontrar a temperatura em diferentes formatos
+            temperatures = re.findall(r"(\+?\d+\.\d+)\s?°C", output)
+            if not temperatures:
+                temperatures = re.findall(r"temp1:\s+(\+?\d+\.\d+)\s?°C", output)
+            if temperatures:
+                return f"{temperatures[0]} °C"
+            else:
+                return "Não foi possível obter a temperatura da CPU (Linux)"
+        except Exception as e:
+            return f"Não foi possível obter a temperatura da CPU (Linux): {e}"
+    else:
+        return "Temperatura da CPU não suportada neste sistema operacional"
 
-		if sistema_operacional == "Windows"
-			try:
-				import wmi
-				c = wmi.WMI(namespace = "root\WMI")
-				temperature_info = c.MSAcpi_thermalZoneTemperature()[0]
-				temperature_kelvin = float(temperature_info.CurrentTemperature)
-				temperature_celsius = (temperaturre_kelvin - 2731.5)/10.0
-				return f"{temperature_celsius:.2f} °C"
-
-			except Exception as e:
-
-				return "Não foi possivel obter a temperatura da CPU"
-
-		elif sistema_operacional == "Linux":
-			try:
-				output = os.popen("sensors").read()
-				temperatures = re.findall(r"(\+?\d+\. \d+) \s? °C", output)
-
-				if temperatures:
-					return f"{temperatures[0]}°C"
-
-				else:
-					return "Não foi possivel obter a temperatura da CPU"
-
-
-			except Exception as e:
-				return "Não foi possivel obter a temperatura da CPU"
-
-		else:
-
-			return "Temperatura da CPU não suportada neste sistema operacional"
 
 
 
