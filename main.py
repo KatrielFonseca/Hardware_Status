@@ -104,24 +104,26 @@ def get_temperatura_cpu(self):
 	"""Função que mostra relatório das buscas"""			
 
 	def mostrar_relatorio(self):
-        print("\n===== RELATÓRIO DE SISTEMA =====")
-        print("\n--- PROCESSADOR ---")
-        for chave, valor in self.info_processador.items():
-            print(f"{chave}: {valor}")
+	    print("===== RELATÓRIO DE SISTEMA =====")
+	    print("Atualizado em: " + time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))  # Adiciona timestamp
+	    print("\n--- PROCESSADOR ---")
+	    for chave, valor in self.info_processador.items():
+	        print(f"  {chave}: {valor}")
 
-        print("\n--- MEMÓRIA ---")
-        for chave, valor in self.info_memoria.items():
-            print(f"{chave}: {valor}")
+	    print("\n--- MEMÓRIA ---")
+	    for chave, valor in self.info_memoria.items():
+	        print(f"  {chave}: {valor}")
 
-        print("\n--- GPU ---")
-        for gpu in self.info_gpu:
-            print("\n--- Placa de Vídeo ---")
-            for chave, valor in gpu.items():
-                print(f"{chave}: {valor}")
+	    print("\n--- GPU ---")
+	    for gpu in self.info_gpu:
+	        print("\n  --- Placa de Vídeo ---")
+	        for chave, valor in gpu.items():
+	            print(f"    {chave}: {valor}")
 
-        print("\n--- PLACA MÃE ---")
-        for chave, valor in self.info_motherboard.items():
-            print(f"{chave}: {valor}")
+	    print("\n--- PLACA MÃE ---")
+	    for chave, valor in self.info_motherboard.items():
+	        print(f"  {chave}: {valor}")
+
 
 
 """Cria uma instância da classe SistemaInfos"""
