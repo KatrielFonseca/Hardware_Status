@@ -1,135 +1,96 @@
-import cpuinfo
-import psutil
-import GPUtil
-import os
-import re
-import time
+import platform
+
+# Verifica se o sistema operacional é Windows
+if platform.system() != "Windows":
+    print("Este script foi desenvolvido para Windows utilizando WMI. Execute-o em um sistema Windows.")
+    exit()
+
+try:
+    import wmi
+except ImportError:
+    print("O módulo WMI não está instalado. Por favor, instale-o usando 'pip install wmi'.")
+    exit()
 
 
-class SystemInfos(self):
-	"""atributos do objeto"""
-	def __init__(self):
-		self.info_processador = self.get_info_processador()
-		self.info_memoria = self.get_info_memoria()
-		self.info_gpu = self.get_info_gpu()
-		self.info_motherboard = self.get_info_motherboard()
-
-		"""Método que recolhe informações do processador"""
-	def get_info_processador (self):
-		info = cpuinfo.get_cpu_info()
-		nome = info['brand_raw']
-
-		return {"nome": nome,
-		 "temperatura": self.get_temperatura_cpu()}
-
-
-		 """Método que recolhe informações da memória"""
-	def get_info_memoria(self):
-		memoria = psutil.virtual_memory()
-		total = memoria.total / (1024**3)
-
-		return {
-			"nome": "Memória RAM", 
-			"Capacidade": f"{total:.2f} GB"
-		}
-
-		"""Método que recolhe informações da placa de video"""
-	def get_info_gpu(self):
-		gpus = GPUtil.getGPUs()
-		gpu_infos = []
-
-		for gpu in gpus:
-			gpu_infos.append({
-				"nome": gpu.name,
-				"capacidade": f"{gpu.memoryTotal} MB",
-				"temperatura": f"{gpu.temperature} °C"
-				})
-			return gpu_infos
+def obter_temperatura_cpu(w):
+    """
+    Tenta obter a temperatura da CPU usando a classe MSAcpi_ThermalZoneTemperature.
+    Nem todos os sistemas retornam esses dados via WMI.
+    """
+    try:
+        zonas = w.MSAcpi_ThermalZoneTemperature()
+        for zona in zonas:
+            # A temperatura é retornada em décimos de Kelvin.
+            temp_celsius = (int(zona.CurrentTemperature) / 10) - 273.15
+            return temp_celsius
+    except Exception:
+        pass
+    return None
 
 
-			"""Método que recolhe informações da placa mãe"""
-	def get_info_motherboard(self):
-		sistema_operacional = platform.system()
-
-		if sistema_operacional == "Windows":
-			try:
-				import wmi
-				c = wmi.WMI()
-				for board in c.win32_baseboard():
-					return{
-					"Nome": board.ManuFacturer + " " + board.Product,
-
-					}
-			except ImportError:
-				return{"Nome": "Não foi possivel obter informações da placa-mãe (wmi não instalado)"}		
-
-		else: 
-			return {"Nome": "Informações da placa-mãe não suportadas neste sistema operacional"}		
-
-
-
-	"""Método que busca temperatura da cpu"""
-
-def get_temperatura_cpu(self):
-    sistema_operacional = platform.system()
-    if sistema_operacional == "Windows":
-        try:
-            import wmi
-            c = wmi.WMI(namespace="root\WMI")
-            temperature_info = c.MSAcpi_ThermalZoneTemperature()[0]
-            temperature_kelvin = float(temperature_info.CurrentTemperature)
-            temperature_celsius = (temperature_kelvin - 2731.5) / 10.0
-            return f"{temperature_celsius:.2f} °C"
-        except Exception as e:
-            return "Não foi possível obter a temperatura da CPU (Windows)"
-    elif sistema_operacional == "Linux":
-        try:
-            output = os.popen("sensors").read()
-            # Tenta encontrar a temperatura em diferentes formatos
-            temperatures = re.findall(r"(\+?\d+\.\d+)\s?°C", output)
-            if not temperatures:
-                temperatures = re.findall(r"temp1:\s+(\+?\d+\.\d+)\s?°C", output)
-            if temperatures:
-                return f"{temperatures[0]} °C"
-            else:
-                return "Não foi possível obter a temperatura da CPU (Linux)"
-        except Exception as e:
-            return f"Não foi possível obter a temperatura da CPU (Linux): {e}"
-    else:
-        return "Temperatura da CPU não suportada neste sistema operacional"
-
-
-
-
-	"""Função que mostra relatório das buscas"""			
-
-	def mostrar_relatorio(self):
-	    print("===== RELATÓRIO DE SISTEMA =====")
-	    print("Atualizado em: " + time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))  # Adiciona timestamp
-	    print("\n--- PROCESSADOR ---")
-	    for chave, valor in self.info_processador.items():
-	        print(f"  {chave}: {valor}")
-
-	    print("\n--- MEMÓRIA ---")
-	    for chave, valor in self.info_memoria.items():
-	        print(f"  {chave}: {valor}")
-
-	    print("\n--- GPU ---")
-	    for gpu in self.info_gpu:
-	        print("\n  --- Placa de Vídeo ---")
-	        for chave, valor in gpu.items():
-	            print(f"    {chave}: {valor}")
-
-	    print("\n--- PLACA MÃE ---")
-	    for chave, valor in self.info_motherboard.items():
-	        print(f"  {chave}: {valor}")
-
-
-
-"""Cria uma instância da classe SistemaInfos"""
 def main():
-    sistema = SistemaInfos()
-    while True:
-        os.system('cls' if os.name == 'nt' else 'clear')  # Limpa a tela
-        sistema.mostrar_relatorio()
-        time.sleep(1)  # Aguarda 1 segundo
+    w = wmi.WMI()
+
+    # Informações do Processador
+    print("=== Processador ===")
+    for cpu in w.Win32_Processor():
+        print("Fabricante:", cpu.Manufacturer)
+        print("Frequência: {} MHz".format(cpu.CurrentClockSpeed))
+        temp_cpu = obter_temperatura_cpu(w)
+        if temp_cpu is not None:
+            print("Temperatura: {:.2f} °C".format(temp_cpu))
+        else:
+            print("Temperatura: Não disponível")
+        # Considera somente o primeiro processador caso haja mais de um
+        break
+
+    # Informações da Memória RAM
+    print("\n=== Memória RAM ===")
+    fabricantes_ram = set()
+    capacidade_total_bytes = 0
+    for mem in w.Win32_PhysicalMemory():
+        if mem.Manufacturer:
+            fabricantes_ram.add(mem.Manufacturer.strip())
+        if mem.Capacity:
+            capacidade_total_bytes += int(mem.Capacity)
+    print("Fabricante(s):", ", ".join(fabricantes_ram) if fabricantes_ram else "Não disponível")
+
+    # Obter informações de uso de memória via Win32_OperatingSystem
+    os_info = w.Win32_OperatingSystem()[0]
+    total_mem_kb = int(os_info.TotalVisibleMemorySize)  # em KB
+    free_mem_kb = int(os_info.FreePhysicalMemory)  # em KB
+    used_mem_kb = total_mem_kb - free_mem_kb
+    print("Capacidade Máxima: {:.2f} GB".format(capacidade_total_bytes / (1024 ** 3)))
+    # Converte KB para GB (1 GB = 1024*1024 KB)
+    print("Capacidade Usada: {:.2f} GB".format(used_mem_kb / (1024 ** 2)))
+
+    # Informações da Placa de Vídeo
+    print("\n=== Placa de Vídeo ===")
+    for gpu in w.Win32_VideoController():
+        print("Fabricante:", gpu.AdapterCompatibility)
+        if gpu.AdapterRAM:
+            print("Capacidade: {:.2f} GB".format(int(gpu.AdapterRAM) / (1024 ** 3)))
+        else:
+            print("Capacidade: Não disponível")
+        # A maioria dos sistemas não fornece a temperatura da GPU via WMI
+        if hasattr(gpu, "CurrentTemperature") and gpu.CurrentTemperature is not None:
+            try:
+                temp_gpu = (int(gpu.CurrentTemperature) / 10) - 273.15
+                print("Temperatura: {:.2f} °C".format(temp_gpu))
+            except Exception:
+                print("Temperatura: Não disponível")
+        else:
+            print("Temperatura: Não disponível")
+        # Considera somente a primeira placa de vídeo encontrada
+        break
+
+    # Informações da Placa Mãe
+    print("\n=== Placa Mãe ===")
+    for base in w.Win32_BaseBoard():
+        print("Fabricante:", base.Manufacturer)
+        # Considera somente a primeira placa mãe encontrada
+        break
+
+
+if __name__ == '__main__':
+    main()
