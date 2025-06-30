@@ -14,47 +14,37 @@ titulo.pack(pady=20)
 frame_principal = tk.Frame(root, bg='#121212')
 frame_principal.pack(padx=50, fill='x')
 
+class hardwareStatus:
+    def __init__(self, hardware, fabricante, modelo, frequencia, nucleos, capacidade, porcentagem_de_uso ):
+        self.hardware = hardware
+        self.fabricante = fabricante
+        self.modelo = modelo
+        self.frequencia = frequencia
+        self.nucleos = nucleos
+        self.capacidade = capacidade
+        self.porcentagem_de_uso = porcentagem_de_uso
+
+    def get_status(self):
+        aux = tk.Label(frame_principal, text=f"{self.hardware}", bg='#121212', fg='white', font=('Times New Roman', 14, 'bold'),anchor='center').pack()
+        for chave , valor in self.__dict__.items():
+            if valor == "" or valor == self.hardware:
+                continue
+            else:
+                tk.Label(frame_principal, text=f"{chave} :", bg='#121212', fg='white',font=('Times New Roman', 12, 'bold'), ).pack(anchor='w')
+                aux = tk.Label(frame_principal, text=f"{valor}", bg='#121212', fg='#00FF00',font=('Times New Roman', 12, 'bold'), ).pack(anchor='w')
+
+        return aux
+
+
+
+
+hardwareStatus("Processador","teste de entrada 1 ","teste de entrada 2 ","","","tde 4","").get_status()
+
+
 # Processador (centralizado)
-tk.Label(frame_principal, text="🖥️ Processador", bg='#121212', fg='white', font=('Arial', 14, 'bold'), anchor='center').pack()
-tk.Label(frame_principal, text="Fabricante:", bg='#121212', fg='#B0B0B0', font=('Arial', 10), anchor='w').pack(fill='x')
-tk.Label(frame_principal, text="N/A", bg='#121212', fg='#00FF00', font=('Arial', 10), anchor='w').pack(fill='x')
-
-tk.Label(frame_principal, text="Modelo:", bg='#121212', fg='#B0B0B0', font=('Arial', 10), anchor='w').pack(fill='x')
-tk.Label(frame_principal, text="N/A", bg='#121212', fg='#00FF00', font=('Arial', 10), anchor='w').pack(fill='x')
-
-tk.Label(frame_principal, text="Frequência:", bg='#121212', fg='#B0B0B0', font=('Arial', 10), anchor='w').pack(fill='x')
-tk.Label(frame_principal, text="N/A", bg='#121212', fg='#00FF00', font=('Arial', 10), anchor='w').pack(fill='x')
-
-tk.Label(frame_principal, text="Núcleos:", bg='#121212', fg='#B0B0B0', font=('Arial', 10), anchor='w').pack(fill='x')
-tk.Label(frame_principal, text="N/A", bg='#121212', fg='#00FF00', font=('Arial', 10), anchor='w').pack(fill='x')
-
-# Memória RAM (centralizado)
-tk.Label(frame_principal, text="🧠 Memória RAM", bg='#121212', fg='white', font=('Arial', 14, 'bold'), anchor='center').pack(pady=(10,0))
-tk.Label(frame_principal, text="Fabricante(s):", bg='#121212', fg='#B0B0B0', font=('Arial', 10), anchor='w').pack(fill='x')
-tk.Label(frame_principal, text="N/A", bg='#121212', fg='#00FF00', font=('Arial', 10), anchor='w').pack(fill='x')
-
-tk.Label(frame_principal, text="Capacidade Máxima:", bg='#121212', fg='#B0B0B0', font=('Arial', 10), anchor='w').pack(fill='x')
-tk.Label(frame_principal, text="N/A", bg='#121212', fg='#00FF00', font=('Arial', 10), anchor='w').pack(fill='x')
-
-tk.Label(frame_principal, text="Capacidade Usada:", bg='#121212', fg='#B0B0B0', font=('Arial', 10), anchor='w').pack(fill='x')
-tk.Label(frame_principal, text="N/A", bg='#121212', fg='#00FF00', font=('Arial', 10), anchor='w').pack(fill='x')
-
-tk.Label(frame_principal, text="Porcentagem de Uso:", bg='#121212', fg='#B0B0B0', font=('Arial', 10), anchor='w').pack(fill='x')
-tk.Label(frame_principal, text="N/A", bg='#121212', fg='#00FF00', font=('Arial', 10), anchor='w').pack(fill='x')
-
-# Placa de Vídeo (centralizado)
-tk.Label(frame_principal, text="💻 Placa de Vídeo", bg='#121212', fg='white', font=('Arial', 14, 'bold'), anchor='center').pack(pady=(10,0))
-tk.Label(frame_principal, text="Fabricante/Modelo:", bg='#121212', fg='#B0B0B0', font=('Arial', 10), anchor='w').pack(fill='x')
-tk.Label(frame_principal, text="N/A", bg='#121212', fg='#00FF00', font=('Arial', 10), anchor='w').pack(fill='x')
-
-tk.Label(frame_principal, text="VRAM:", bg='#121212', fg='#B0B0B0', font=('Arial', 10), anchor='w').pack(fill='x')
-tk.Label(frame_principal, text="N/A", bg='#121212', fg='#00FF00', font=('Arial', 10), anchor='w').pack(fill='x')
 
 
-# Placa Mãe (centralizado)
-tk.Label(frame_principal, text="🔌 Placa Mãe", bg='#121212', fg='white', font=('Arial', 14, 'bold'), anchor='center').pack(pady=(10,0))
-tk.Label(frame_principal, text="Fabricante/Modelo:", bg='#121212', fg='#B0B0B0', font=('Arial', 10), anchor='w').pack(fill='x')
-tk.Label(frame_principal, text="N/A", bg='#121212', fg='#00FF00', font=('Arial', 10), anchor='w').pack(fill='x')
+
 
 # Botões
 frame_botoes = tk.Frame(root, bg='#121212')
