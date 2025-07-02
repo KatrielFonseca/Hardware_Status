@@ -11,87 +11,64 @@ except ImportError:
     print("O módulo WMI não está instalado. Por favor, instale-o usando 'pip install wmi'.")
     exit()
 
-def obter_temperatura_cpu(w):
-    """
-    Tenta obter a temperatura da CPU usando a classe MSAcpi_ThermalZoneTemperature.
-    Nem todos os sistemas retornam esses dados via WMI.
-    """
-    try:
-        zonas = w.MSAcpi_ThermalZoneTemperature()
-        for zona in zonas:
-            # A temperatura é retornada em décimos de Kelvin.
-            temp_celsius = (int(zona.CurrentTemperature) / 10) - 273.15
-            return temp_celsius
-    except wmi.x_wmi as e:
-        print(f"Erro WMI ao obter temperatura da CPU: {e}")
-        return None
-    except Exception as e:
-        print(f"Erro inesperado ao obter temperatura da CPU: {e}")
-        return None
+
+class hardwareStatus:
+    def __init__(self, hardware, fabricante, modelo, frequencia, nucleos, capacidade):
+        self.hardware = hardware
+        self.fabricante = fabricante
+        self.modelo = modelo
+        self.frequencia = frequencia
+        self.nucleos = nucleos
+        self.capacidade = capacidade
+
+    def Imprimir_Hardware(self):
+        for chave , valor in self.__dict__.items():
+            if valor == "":
+                continue
+            print(f"{chave} : {valor}")
+
 
 def main():
     try:
         w = wmi.WMI()
 
         # Informações do Processador
-        print("=== Processador ===")
         for cpu in w.Win32_Processor():
-            print("Fabricante:", cpu.Manufacturer)
-            print("Modelo:", cpu.Name)
-            print("Frequência: {} MHz".format(cpu.CurrentClockSpeed))
-            print("Núcleos: {}".format(cpu.NumberOfCores))
-            temp_cpu = obter_temperatura_cpu(w)
-            if temp_cpu is not None:
-                print("Temperatura: {:.2f} °C".format(temp_cpu))
-            else:
-                print("Temperatura: Não disponível")
-            # Considera somente o primeiro processador caso haja mais de um
-            break
+            proc = hardwareStatus("Processador", cpu.Manufacturer,cpu.Name,cpu.CurrentClockSpeed,cpu.NumberOfCores,"")
+            hardwareStatus.Imprimir_Hardware(proc)
+        #-----------------------------------------------------------------------------------------------------------------------
 
+        print("\n")
         # Informações da Memória RAM
-        print("\n=== Memória RAM ===")
-        fabricantes_ram = set()
-        capacidade_total_bytes = 0
+        rams = set()
         for mem in w.Win32_PhysicalMemory():
-            if mem.Manufacturer:
-                fabricantes_ram.add(mem.Manufacturer.strip())
-            if mem.Capacity:
-                capacidade_total_bytes += int(mem.Capacity)
-        print("Fabricante(s):", ", ".join(fabricantes_ram) if fabricantes_ram else "Não disponível")
+            rams.add(hardwareStatus("RAM", mem.Manufacturer.strip(),"","","",int(mem.Capacity)/(1024 ** 3)))
+        capacidade_total = 0
+        for aux in rams:
+            hardwareStatus.Imprimir_Hardware(aux)
+            capacidade_total += aux.capacidade
+        print("Capacidade Máxima: ", capacidade_total, "GB")
+        print("Porcentagem de Uso: {:.2f}%".format(((capacidade_total - float(w.Win32_OperatingSystem()[0].FreePhysicalMemory)/1024**2)/capacidade_total)*100))
+        # -----------------------------------------------------------------------------------------------------------------------
 
-        # Obter informações de uso de memória via Win32_OperatingSystem
-        os_info = w.Win32_OperatingSystem()[0]
-        total_mem_kb = int(os_info.TotalVisibleMemorySize)  # em KB
-        free_mem_kb = int(os_info.FreePhysicalMemory)  # em KB
-        used_mem_kb = total_mem_kb - free_mem_kb
-        print("Capacidade Máxima: {:.2f} GB".format(capacidade_total_bytes / (1024 ** 3)))
-        # Converte KB para GB (1 GB = 1024*1024 KB)
-        print("Capacidade Usada: {:.2f} GB".format(used_mem_kb / (1024 ** 2)))
-        print("Porcentagem de Uso: {:.2f}%".format((used_mem_kb / total_mem_kb) * 100))
+        print("\n")
+
 
         # Informações da Placa de Vídeo
-        print("\n=== Placa de Vídeo ===")
-        placa_dedicada_encontrada = False
+        gpus = set()
         for gpu in w.Win32_VideoController():
-            # Filtra placas integradas
-            if "Intel" in gpu.AdapterCompatibility or "Microsoft" in gpu.AdapterCompatibility or  "Advanced Micro Devices" in gpu.AdapterCompatibility:
-                continue  # Ignora a placa integrada
+            gpus.add(hardwareStatus("GPU", gpu.Name,"","","",gpu.AdapterRAM / (-1024 ** 3),))
 
-            print(gpu.AdapterCompatibility, gpu.Name)
-            print("VRAM:", int(gpu.AdapterRAM) / -1024 ** 3)
-            placa_dedicada_encontrada = True
-            break  # Mostra apenas a primeira placa dedicada
+        for aux in gpus:
+            hardwareStatus.Imprimir_Hardware(aux)
+        # -----------------------------------------------------------------------------------------------------------------------
 
-        if not placa_dedicada_encontrada:
-            print("Nenhuma placa de vídeo dedicada encontrada.")
-
+            print("\n")
 
         # Informações da Placa Mãe
-        print("\n=== Placa Mãe ===")
-        for base in w.Win32_BaseBoard():
-            print( base.Manufacturer, base.Product)
-            # Considera somente a primeira placa mãe encontrada
-            break
+        for b in w.Win32_BaseBoard():
+            placa_mae = hardwareStatus("Placa mãe", b.Manufacturer, b.product, "", "", "")
+            hardwareStatus.Imprimir_Hardware(placa_mae)
 
     except Exception as e:
         print(f"Ocorreu um erro ao coletar informações do sistema: {e}")

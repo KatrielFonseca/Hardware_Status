@@ -30,9 +30,8 @@ class hardwareStatus:
             if valor == "" or valor == self.hardware:
                 continue
             else:
-                tk.Label(frame_principal, text=f"{chave} :", bg='#121212', fg='white',font=('Times New Roman', 12, 'bold'), ).pack(anchor='w')
-                aux = tk.Label(frame_principal, text=f"{valor}", bg='#121212', fg='#00FF00',font=('Times New Roman', 12, 'bold'), ).pack(anchor='w')
-
+                tk.Label(frame_principal, text=f"{chave} :", bg='#121212', fg='white',font=('Times New Roman', 12, 'bold'), ).pack(side='left', padx=10)
+                aux = tk.Label(frame_principal, text=f"{valor} ", bg='#121212', fg='#00FF00',font=('Times New Roman', 12, 'bold'), ).pack(side='left',  pady=10)
         return aux
 
 
