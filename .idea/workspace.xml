@@ -5,6 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="254c1efd-820c-4365-88a3-733cd198767b" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/Hardware_Status.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Hardware_Status.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/interface.py" beforeDir="false" afterPath="$PROJECT_DIR$/interface.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
@@ -84,7 +86,13 @@
       <workItem from="1751233827734" duration="8651000" />
       <workItem from="1751245272790" duration="27137000" />
       <workItem from="1751422782304" duration="2255000" />
-      <workItem from="1751426326006" duration="7185000" />
+      <workItem from="1751426326006" duration="8489000" />
+      <workItem from="1751490871286" duration="11645000" />
+      <workItem from="1751503398565" duration="757000" />
+      <workItem from="1751504517329" duration="176000" />
+      <workItem from="1751504729489" duration="438000" />
+      <workItem from="1751505588988" duration="77000" />
+      <workItem from="1751505906085" duration="7067000" />
     </task>
     <servers />
   </component>
@@ -102,8 +110,8 @@
     </breakpoint-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/Hardware_Status$interface.coverage" NAME="interface Coverage Results" MODIFIED="1751433426607" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/Hardware_Status$main.coverage" NAME="main Coverage Results" MODIFIED="1751433569410" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Hardware_Status$interface.coverage" NAME="interface Coverage Results" MODIFIED="1751513030678" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Hardware_Status$main.coverage" NAME="main Coverage Results" MODIFIED="1751504667437" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/projeto_hs$interface_futuristica.coverage" NAME="interface futuristica Coverage Results" MODIFIED="1751207285106" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/projeto_hs$informaçoes.coverage" NAME="informaçoes Coverage Results" MODIFIED="1751181156623" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
